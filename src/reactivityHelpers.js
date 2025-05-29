@@ -1,4 +1,4 @@
-import * as Vue from 'vue'
+import { isReactive, computed, unref } from 'vue'
 import last from 'lodash.last'
 import isObjectLike from 'lodash.isobjectlike'
 import { getDeep } from './objectHelpers'
@@ -19,8 +19,8 @@ export function toReadonlyRefDeep(source, path) {
     throw new Error('path is expected to be an array')
   }
 
-  return Vue.computed(() => {
-    return getDeep(source, path, Vue.unref)
+  return computed(() => {
+    return getDeep(source, path, unref)
   })
 }
 
@@ -33,7 +33,7 @@ export function toReadonlyRefDeep(source, path) {
 const INDEX_LIKE_RE = /^\d+$/
 
 export function reactiveSetDeep(source, path, val) {
-  if (!Vue.isReactive(source)) {
+  if (!isReactive(source)) {
     throw new Error('source should be reactive!')
   }
 
@@ -49,29 +49,21 @@ export function reactiveSetDeep(source, path, val) {
 
     if (!isObjectLike(parent[currKey])) {
       if (INDEX_LIKE_RE.test(nextKey)) {
-        reactiveSet(parent, currKey, [])
+        parent[currKey] = []
       } else {
-        reactiveSet(parent, currKey, {})
+        parent[currKey] = {}
       }
     }
 
     parent = parent[currKey]
 
-    if (!Vue.isReactive(parent)) {
+    if (!isReactive(parent)) {
       throw new Error(`a [link=${currKey}] in the [chain=${path}] is not reactive!`)
     }
   }
 
   const targetKey = last(path)
-  reactiveSet(parent, targetKey, val)
+  parent[targetKey] = val
 
   return source
-}
-
-function reactiveSet(obj, key, val) {
-  if (/^2\./.test(Vue.version)) {
-    Vue.set(obj, key, val)
-  } else {
-    obj[key] = val
-  }
 }

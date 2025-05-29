@@ -1,4 +1,4 @@
-import { mount } from '../demi/testUtils'
+import { mount } from '@vue/test-utils'
 
 import useVuelidate from '@vuelidate/core'
 import { ref, isRef, reactive, nextTick } from 'vue'
@@ -101,7 +101,7 @@ describe('the service itself', () => {
 })
 
 describe('the service integrating with Vuelidate', () => {
-  it('does not make the form invalid unless a server error is set', async () => {
+  it('does not make the form invalid unless a server error is set', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -111,7 +111,7 @@ describe('the service integrating with Vuelidate', () => {
     expect(v$.value.$invalid).toBe(false)
   })
 
-  it('makes the form invalid when a server error is set', async () => {
+  it('makes the form invalid when a server error is set', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -122,7 +122,7 @@ describe('the service integrating with Vuelidate', () => {
     expect(v$.value.$invalid).toBe(true)
   })
 
-  it('restores the validity state when the server error gets unset', async () => {
+  it('restores the validity state when the server error gets unset', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -147,7 +147,7 @@ describe('the service integrating with Vuelidate', () => {
     expect(v$.value.$invalid).toBe(false)
   })
 
-  it('does not flip the error flag unless the form is touched', async () => {
+  it('does not flip the error flag unless the form is touched', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -159,7 +159,7 @@ describe('the service integrating with Vuelidate', () => {
     expect(v$.value.$errors).toEqual([])
   })
 
-  it('flips the error flag when the form gets touched', async () => {
+  it('flips the error flag when the form gets touched', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -172,7 +172,7 @@ describe('the service integrating with Vuelidate', () => {
     expect(v$.value.$errors).toMatchObject([{ $message: 'oops' }])
   })
 
-  it('kees working when the error is a string and not an array of strings', async () => {
+  it('kees working when the error is a string and not an array of strings', () => {
     const myField = ref(null)
     const state = { myField }
     const rules = { myField: [validationDummy] }
@@ -188,31 +188,31 @@ describe('the service integrating with Vuelidate', () => {
 })
 
 describe('the service working with a component utilizing the Options API', () => {
-  it('does not make the form invalid by default', async () => {
+  it('does not make the form invalid by default', () => {
     const wrapper = MyFieldComponent()
     expect(wrapper.vm.v$.$invalid).toBe(false)
   })
 
-  it('makes the form invalid when the ref gets set', async () => {
+  it('makes the form invalid when the ref gets set', () => {
     const wrapper = MyFieldComponent()
     wrapper.vm.vuelidateExternalResults = { myField: ['oops'] }
     expect(wrapper.vm.v$.$invalid).toBe(true)
   })
 
-  it('restores the validity state when the ref gets unset', async () => {
+  it('restores the validity state when the ref gets unset', () => {
     const wrapper = MyFieldComponent()
     wrapper.vm.vuelidateExternalResults = { myField: ['oops'] }
     wrapper.vm.vuelidateExternalResults = null
     expect(wrapper.vm.v$.$invalid).toBe(false)
   })
 
-  it('makes the form invalid when an error gets assigned to the reactive object', async () => {
+  it('makes the form invalid when an error gets assigned to the reactive object', () => {
     const wrapper = MyFieldComponent()
     wrapper.vm.vuelidateExternalResults = { myField: ['oops'] }
     expect(wrapper.vm.v$.$invalid).toBe(true)
   })
 
-  it('restores the validity state when the error gets deleted from the reactive object', async () => {
+  it('restores the validity state when the error gets deleted from the reactive object', () => {
     const wrapper = MyFieldComponent()
     wrapper.vm.vuelidateExternalResults.myField = ['oops']
     wrapper.vm.vuelidateExternalResults.myField = null
